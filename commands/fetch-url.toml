@@ -1,0 +1,15 @@
+name = "fetch-url"
+description = "Fetch a URL and show its text content. Auto-triggers when the user provides a URL or asks to look up a webpage."
+
+prompt = """
+Fetch the URL {{url}} using the webfetch_fetch_url tool.
+If method is provided, pass it as the method parameter.
+If body is provided, pass it as the body parameter.
+If headers are provided, pass them as the headers parameter.
+Show the full response content returned.
+"""
+
+[parameters]
+url = { type = "string", description = "Full URL to fetch (e.g. https://example.com/page)", required = true }
+method = { type = "string", description = "HTTP method (GET, POST, PUT, PATCH). Default: GET", required = false }
+body = { type = "string", description = "Request body for POST/PUT/PATCH", required = false }

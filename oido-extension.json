@@ -1,0 +1,46 @@
+{
+  "name": "oido-webfetch",
+  "version": "1.0.0",
+  "description": "Fetch URLs and inject their text content into the LLM context.",
+  "runtime": "make build",
+  "mcpServers": {
+    "oido-webfetch": {
+      "command": "${extensionPath}/oido-webfetch-mcp",
+      "args": [],
+      "env": {
+        "OIDO_WEBFETCH_TIMEOUT": "${OIDO_WEBFETCH_TIMEOUT}",
+        "OIDO_WEBFETCH_USER_AGENT": "${OIDO_WEBFETCH_USER_AGENT}",
+        "OIDO_WEBFETCH_PROXY": "${OIDO_WEBFETCH_PROXY}",
+        "OIDO_WEBFETCH_MAX_RESPONSE_SIZE": "${OIDO_WEBFETCH_MAX_RESPONSE_SIZE}"
+      }
+    }
+  },
+  "contextFileName": "OIDO.md",
+  "excludeTools": [],
+  "settings": [
+    {
+      "name": "OIDO_WEBFETCH_TIMEOUT",
+      "description": "HTTP request timeout in seconds",
+      "defaultValue": "30",
+      "type": "number"
+    },
+    {
+      "name": "OIDO_WEBFETCH_USER_AGENT",
+      "description": "User-Agent header value",
+      "defaultValue": "OidoWebFetch/1.0",
+      "type": "string"
+    },
+    {
+      "name": "OIDO_WEBFETCH_PROXY",
+      "description": "Optional HTTP proxy URL (e.g. http://proxy:8080)",
+      "defaultValue": "",
+      "type": "string"
+    },
+    {
+      "name": "OIDO_WEBFETCH_MAX_RESPONSE_SIZE",
+      "description": "Maximum response body size in bytes before truncation",
+      "defaultValue": "4194304",
+      "type": "number"
+    }
+  ]
+}
