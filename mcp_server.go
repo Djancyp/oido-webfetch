@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
@@ -23,12 +24,14 @@ type FetchURLArgs struct {
 func RunMCPServer() {
 	cfg, err := LoadConfig()
 	if err != nil {
-		log.Fatalf("Config error: %v", err)
+		log.Printf("Warning: config error (using defaults): %v", err)
+		cfg = &Config{Timeout: 30 * time.Second, UserAgent: "OidoWebFetch/1.0", MaxRespSize: 4 * 1024 * 1024}
 	}
 
 	fetcher, err := NewFetcher(cfg)
 	if err != nil {
-		log.Fatalf("Fetcher error: %v", err)
+		log.Printf("Warning: fetcher init failed: %v", err)
+		fetcher = &Fetcher{cfg: cfg}
 	}
 
 	handler := &MCPHandler{fetcher: fetcher, cfg: cfg}
