@@ -58,43 +58,39 @@ HTML pages are automatically parsed into a structured YAML schema with sections:
   - code_blocks
 
 For API endpoints (JSON/XML) or non-GET methods, returns raw response text.
-Follows redirects (up to 10).
-
-Parameters:
-  - url (required): full URL including scheme, e.g. "https://example.com/page"
-  - method (optional): HTTP method, defaults to GET
-  - headers (optional): map of custom HTTP headers
-  - body (optional): request body for POST/PUT/PATCH`,
+Follows redirects (up to 10).`,
 	}, handler.HandleFetchURL)
 
 	ctx := context.Background()
 	log.Println("Oido WebFetch MCP Server starting on stdio...")
 
-	if err := server.Run(ctx, mcp.NewStdioTransport()); err != nil {
+	if err := server.Run(ctx, &mcp.StdioTransport{}); err != nil {
 		log.Fatalf("MCP server error: %v", err)
 	}
 }
 
-func (h *MCPHandler) HandleFetchURL(ctx context.Context, _ *mcp.ServerSession, params *mcp.CallToolParamsFor[FetchURLArgs]) (*mcp.CallToolResult, error) {
-	args := params.Arguments
-
+func (h *MCPHandler) HandleFetchURL(ctx context.Context, _ *mcp.CallToolRequest, args FetchURLArgs) (*mcp.CallToolResult, any, error) {
 	if args.URL == "" {
-		return errResult("url parameter is required"), nil
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{&mcp.TextContent{Text: "Error: url parameter is required"}},
+			IsError: true,
+		}, nil, nil
 	}
 
 	result, err := h.fetcher.Fetch(ctx, args.URL, args.Method, args.Headers, args.Body)
 	if err != nil {
-		return errResult(fmt.Sprintf("fetch failed: %v", err)), nil
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{&mcp.TextContent{Text: fmt.Sprintf("Error: %v", err)}},
+			IsError: true,
+		}, nil, nil
 	}
 
 	output := fmt.Sprintf("URL: %s\nStatus: %d\nContent-Type: %s\n\n%s",
 		result.URL, result.StatusCode, result.ContentType, result.Body)
 
 	return &mcp.CallToolResult{
-		Content: []mcp.Content{
-			&mcp.TextContent{Text: output},
-		},
-	}, nil
+		Content: []mcp.Content{&mcp.TextContent{Text: output}},
+	}, nil, nil
 }
 
 func errResult(msg string) *mcp.CallToolResult {
